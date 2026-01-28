@@ -1,18 +1,55 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <string>
 #include "../include/Character.hpp"
+#include "../include/Ennemie.hpp"
 
 int main() {
+    Character joueur("Hero", 100, 50);
     
-    std::vector<Character> enemies;
-    enemies.push_back(Character("Gobelin Rapide", 30, 80));
-    enemies.push_back(Character("Orque Lent", 60, 20));
-    enemies.push_back(Character("Troll Moyen", 100, 50));
+    std::vector<Ennemie*> donjon;
+    donjon.push_back(new Strong(15));
+    donjon.push_back(new Speed(10));
+    donjon.push_back(new Clever(25)); 
+    std::cout << "--- BIENVENUE DANS L'ARENE ---" << std::endl;
 
-    std::sort(enemies.begin(), enemies.end(), [](const Character& a, const Character& b) {
-        return a.getSpeed() > b.getSpeed();
-    });
+    for (Ennemie* adversaire : donjon) {
+        if (!joueur.isAlive()) break;
 
+        std::cout << "\n>>> Un " << adversaire->nom << " barre la route !" << std::endl;
 
+        while (adversaire->force > 0 && joueur.isAlive()) {
+            std::cout << "\n(A)ttaquer ou (P)asser le tour ? ";
+            char choix;
+            std::cin >> choix;
+
+            if (choix == 'A' || choix == 'a') {
+                std::cout << "Vous frappez le " << adversaire->nom << " !" << std::endl;
+                adversaire->force -= 5; 
+                if (adversaire->force <= 0) {
+                    std::cout << "Le " << adversaire->nom << " est vaincu !" << std::endl;
+                    break;
+                }
+            }
+
+            adversaire->attaquer(joueur);
+
+            if (!joueur.isAlive()) {
+                std::cout << "Le Hero est tombe au combat..." << std::endl;
+                break;
+            }
+        }
+    }
+
+    if (joueur.isAlive()) {
+        std::cout << "\nFELICITATIONS ! Vous avez nettoye le donjon !" << std::endl;
+    }
+
+    for (Ennemie* e : donjon) {
+        delete e;
+    }
+    donjon.clear();
+
+    return 0;
 }

@@ -3,7 +3,7 @@ CC = g++
 CFLAGS = -Wall -Wextra -std=c++17
 INC = -Iinclude
 
-SRC = src/main.cpp src/Character.cpp
+SRC = src/main.cpp src/Character.cpp src/Ennemie.cpp
 OBJ = $(SRC:.cpp=.o)
 
 all: $(NAME)
