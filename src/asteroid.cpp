@@ -2,34 +2,37 @@
 #include "../include/Utils.hpp"
 #include <SFML/System/Angle.hpp>
 
-Asteroid::Asteroid(float x, float y) {
-    shape.setSize({40.f, 40.f});
-    shape.setOrigin({20.f, 20.f});
-    shape.setPosition({x, y});
+// Initialisation directe ": sprite(tex)"
+Asteroid::Asteroid(float x, float y, const sf::Texture& tex) 
+    : sprite(tex) 
+{
+    sprite.setPosition({x, y});
     
-    shape.setFillColor(sf::Color::Transparent);
-    shape.setOutlineColor(sf::Color::White);
-    shape.setOutlineThickness(2.f);
+    // Ajuste l'échelle selon la taille de tes images Sonic/Asteroid
+    sprite.setScale({0.5f, 0.5f}); 
+
+    // Centrage
+    sf::FloatRect bounds = sprite.getLocalBounds();
+    sprite.setOrigin({bounds.size.x / 2.f, bounds.size.y / 2.f});
 
     velocity = { randomFloat(-100.f, 100.f), randomFloat(-100.f, 100.f) };
     rotationSpeed = randomFloat(-50.f, 50.f);
 }
 
 void Asteroid::update(float dt, const sf::Vector2u& winSize) {
-    shape.move(velocity * dt);
-    shape.rotate(sf::degrees(rotationSpeed * dt));
+    sprite.move(velocity * dt);
+    sprite.rotate(sf::degrees(rotationSpeed * dt));
 
-    // Screen Wrapping
-    sf::Vector2f pos = shape.getPosition();
+    sf::Vector2f pos = sprite.getPosition();
     if (pos.x > winSize.x) pos.x = 0;
     else if (pos.x < 0) pos.x = (float)winSize.x;
     
     if (pos.y > winSize.y) pos.y = 0;
     else if (pos.y < 0) pos.y = (float)winSize.y;
     
-    shape.setPosition(pos);
+    sprite.setPosition(pos);
 }
 
 void Asteroid::draw(sf::RenderWindow& window) {
-    window.draw(shape);
+    window.draw(sprite);
 }
