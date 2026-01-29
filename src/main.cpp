@@ -2,10 +2,28 @@
 #include <vector>
 #include <algorithm>
 #include <string>
-#include "../include/Character.hpp"
-#include "../include/Ennemie.hpp"
+#include <SFML/Graphics.hpp>
+#include "Character.hpp"
+#include "Ennemie.hpp"
+
 
 int main() {
+    auto window = sf::RenderWindow(sf::VideoMode({1920u, 1080u}), "SFML Project");
+    window.setFramerateLimit(144);
+
+    while (window.isOpen())
+    {
+        while (const std::optional event = window.pollEvent())
+        {
+            if (event->is<sf::Event::Closed>())
+            {
+                window.close();
+            }
+        }
+
+        window.clear();
+        window.display();
+    }
     Character joueur("Hero", 100, 50);
     
     std::vector<Ennemie*> donjon;
