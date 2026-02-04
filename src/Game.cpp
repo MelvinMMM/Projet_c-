@@ -15,9 +15,14 @@ Game::Game()
     music.play();
     music.setVolume(50.f);
     music.setLooping(true);
+    buffer = sf::SoundBuffer();
+    if (!buffer.loadFromFile("music/shot.wav"))
+        std::cerr << "ERREUR : shot introuvable !" << std::endl;
+    sound = new sf::Sound(buffer);
 
     // 2. POLICE ET INTERFACE (UI)
-    if (!font.openFromFile("assets/SPACE.ttf")) {
+    if (!font.openFromFile("assets/SPACE.ttf"))
+    {
         std::cerr << "ERREUR : Police SPACE.ttf introuvable !" << std::endl;
     }
 
@@ -26,7 +31,7 @@ Game::Game()
     scoreText->setString("Score: 0");
     scoreText->setCharacterSize(14);
     scoreText->setFillColor(sf::Color::White);
-    scoreText->setPosition({660.f, 20.f}); 
+    scoreText->setPosition({660.f, 20.f});
 
     // Configuration du carré de fond pour le score
     scoreBox.setSize({140.f, 50.f});
@@ -80,39 +85,40 @@ Game::Game()
 
     // ... à la fin du constructeur ...
 
-// 1. UI des Vies (Haut à gauche)
-livesText = std::make_unique<sf::Text>(font);
-livesText->setString("Vies: 3");
-livesText->setCharacterSize(24);
-livesText->setFillColor(sf::Color::Red);
-livesText->setPosition({20.f, 20.f});
+    // 1. UI des Vies (Haut à gauche)
+    livesText = std::make_unique<sf::Text>(font);
+    livesText->setString("Vies: 3");
+    livesText->setCharacterSize(24);
+    livesText->setFillColor(sf::Color::Red);
+    livesText->setPosition({20.f, 20.f});
 
-// 2. Overlay de Game Over (Noir 75% opacité)
-gameOverOverlay.setSize({800.f, 600.f});
-gameOverOverlay.setFillColor(sf::Color(0, 0, 0, 191)); // 191 = 75% de 255
+    // 2. Overlay de Game Over (Noir 75% opacité)
+    gameOverOverlay.setSize({800.f, 600.f});
+    gameOverOverlay.setFillColor(sf::Color(0, 0, 0, 191)); // 191 = 75% de 255
 
-// 3. Bouton Recommencer
-restartButton.setSize({200.f, 50.f});
-restartButton.setFillColor(sf::Color::Blue);
-restartButton.setPosition({300.f, 250.f});
-restartText = std::make_unique<sf::Text>(font);
-restartText->setString("RECOMMENCER");
-restartText->setCharacterSize(16);
-restartText->setPosition({320.f, 260.f});
+    // 3. Bouton Recommencer
+    restartButton.setSize({200.f, 50.f});
+    restartButton.setFillColor(sf::Color::Blue);
+    restartButton.setPosition({300.f, 250.f});
+    restartText = std::make_unique<sf::Text>(font);
+    restartText->setString("RECOMMENCER");
+    restartText->setCharacterSize(16);
+    restartText->setPosition({315.f, 260.f});
 
-// 4. Bouton Quitter
-quitButton.setSize({200.f, 50.f});
-quitButton.setFillColor(sf::Color::Red);
-quitButton.setPosition({300.f, 330.f});
-quitText = std::make_unique<sf::Text>(font);
-quitText->setString("QUITTER");
-quitText->setCharacterSize(16);
-quitText->setPosition({355.f, 340.f});
+    // 4. Bouton Quitter
+    quitButton.setSize({200.f, 50.f});
+    quitButton.setFillColor(sf::Color::Red);
+    quitButton.setPosition({300.f, 330.f});
+    quitText = std::make_unique<sf::Text>(font);
+    quitText->setString("QUITTER");
+    quitText->setCharacterSize(16);
+    quitText->setPosition({350.f, 340.f});
 
-// 5. Charger la musique de Game Over
-if (!gameOverMusic.openFromFile("music/je sais pas trop... 50.mp3")) { 
-    std::cerr << "Musique Game Over introuvable !" << std::endl; 
-}
+    // 5. Charger la musique de Game Over
+    if (!gameOverMusic.openFromFile("music/je sais pas trop... 50.mp3"))
+    {
+        std::cerr << "Musique Game Over introuvable !" << std::endl;
+    }
 }
 
 void Game::run()
@@ -140,16 +146,20 @@ void Game::processEvents()
 
 void Game::update(float dt)
 {
-    if (isGameOver) {
+    if (isGameOver)
+    {
         // Gestion des clics boutons
-        if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left)) {
+        if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
+        {
             sf::Vector2i mousePos = sf::Mouse::getPosition(window);
             sf::Vector2f mousePosF(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y));
 
-            if (restartButton.getGlobalBounds().contains(mousePosF)) {
+            if (restartButton.getGlobalBounds().contains(mousePosF))
+            {
                 resetGame();
             }
-            if (quitButton.getGlobalBounds().contains(mousePosF)) {
+            if (quitButton.getGlobalBounds().contains(mousePosF))
+            {
                 window.close();
             }
         }
@@ -157,18 +167,23 @@ void Game::update(float dt)
     }
 
     // Gestion de l'invincibilité
-    if (isInvincible) {
+    if (isInvincible)
+    {
         invincibilityTimer -= dt;
-        
+
         // Effet visuel : Clignotement
         // On change l'opacité (Alpha) en fonction du temps
-        if (static_cast<int>(invincibilityTimer * 10) % 2 == 0) {
+        if (static_cast<int>(invincibilityTimer * 10) % 2 == 0)
+        {
             player.sprite.setColor(sf::Color(255, 255, 255, 100)); // Transparent
-        } else {
+        }
+        else
+        {
             player.sprite.setColor(sf::Color(255, 255, 255, 255)); // Opaque
         }
 
-        if (invincibilityTimer <= 0) {
+        if (invincibilityTimer <= 0)
+        {
             isInvincible = false;
             player.sprite.setColor(sf::Color::White); // On remet la couleur normale
         }
@@ -181,13 +196,21 @@ void Game::update(float dt)
     {
         bullets.emplace_back(player.sprite.getPosition(), player.sprite.getRotation().asDegrees());
         player.shootCooldown = 0.3f;
+
+        sound->play();
     }
 
     // Update Balles
     for (size_t i = 0; i < bullets.size();)
     {
-        if (bullets[i].update(dt)) { bullets.erase(bullets.begin() + i); }
-        else { i++; }
+        if (bullets[i].update(dt))
+        {
+            bullets.erase(bullets.begin() + i);
+        }
+        else
+        {
+            i++;
+        }
     }
 
     // Update Astéroïdes
@@ -200,20 +223,24 @@ void Game::update(float dt)
     handlePlayerCollisions();
 }
 
-void Game::render() {
+void Game::render()
+{
     window.clear();
     window.draw(bgShape);
     player.draw(window);
-    for (auto &b : bullets) b.draw(window);
-    for (auto &ast : asteroids) ast.draw(window);
-    
+    for (auto &b : bullets)
+        b.draw(window);
+    for (auto &ast : asteroids)
+        ast.draw(window);
+
     // UI classique
     window.draw(scoreBox);
     window.draw(*scoreText);
     window.draw(*livesText);
 
     // --- UI GAME OVER ---
-    if (isGameOver) {
+    if (isGameOver)
+    {
         window.draw(gameOverOverlay);
         window.draw(restartButton);
         window.draw(quitButton);
@@ -238,7 +265,8 @@ bool Game::isColliding(const sf::Sprite &a, const sf::CircleShape &b)
 
 void Game::handleBulletCollisions()
 {
-    if (isGameOver || isInvincible) return;
+    if (isGameOver || isInvincible)
+        return;
 
     for (const auto &ast : asteroids)
     {
@@ -248,11 +276,14 @@ void Game::handleBulletCollisions()
             livesText->setString("Vies: " + std::to_string(lives));
             player.resetPosition({400.f, 300.f});
 
-            if (lives <= 0) {
+            if (lives <= 0)
+            {
                 isGameOver = true;
                 music.stop();
                 gameOverMusic.play();
-            } else {
+            }
+            else
+            {
                 // ACTIVATION DE L'INVINCIBILITÉ
                 isInvincible = true;
                 invincibilityTimer = 2.0f; // 2 secondes
@@ -271,19 +302,23 @@ void Game::handleBulletCollisions()
                 hit = true;
                 break;
             }
-            else { ++itBull; }
+            else
+            {
+                ++itBull;
+            }
         }
 
         if (hit)
         {
             // MISE À JOUR SCORE
             score += 10;
-            if (scoreText) {
+            if (scoreText)
+            {
                 scoreText->setString("Score: " + std::to_string(score));
             }
 
             itAst = asteroids.erase(itAst);
-            
+
             // Respawn
             if (!asteroidTextures.empty())
             {
@@ -291,11 +326,15 @@ void Game::handleBulletCollisions()
                 asteroids.emplace_back(randomFloat(0, 800), randomFloat(0, 600), asteroidTextures[index]);
             }
         }
-        else { ++itAst; }
+        else
+        {
+            ++itAst;
+        }
     }
 }
 
-void Game::resetGame() {
+void Game::resetGame()
+{
     lives = 3;
     score = 0;
     isGameOver = false;
@@ -304,13 +343,14 @@ void Game::resetGame() {
     player.sprite.setColor(sf::Color::White);
     livesText->setString("Vies: 3");
     scoreText->setString("Score: 0");
-    
+
     asteroids.clear();
     bullets.clear();
     player.resetPosition({400.f, 300.f});
-    
+
     // Recréer les astéroïdes
-    for (int i = 0; i < 7; i++) {
+    for (int i = 0; i < 7; i++)
+    {
         int index = std::rand() % asteroidTextures.size();
         asteroids.emplace_back(randomFloat(0, 800), randomFloat(0, 600), asteroidTextures[index]);
     }

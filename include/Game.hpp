@@ -65,6 +65,8 @@ private:
     // --- Musique ---
     sf::Music music;
     sf::Music gameOverMusic;
+    sf::SoundBuffer buffer;
+    sf::Sound *sound;
 
     // --- Fonctions utiles ---
     void resetGame();
